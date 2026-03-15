@@ -107,6 +107,111 @@ Question:
 """
 
 response = claude.generate(prompt)
+
+
+
+requirements.txt
+qdrant-client
+langchain
+sentence-transformers
+requests
+
+document_loader.py
+import os
+
+def load_documents(folder):
+
+    docs = []
+
+    for file in os.listdir(folder):
+
+        with open(os.path.join(folder,file)) as f:
+            docs.append(f.read())
+
+    return docs
+
+
+chunker.py
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+def chunk_docs(docs):
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=50
+    )
+
+    chunks = []
+
+    for doc in docs:
+        chunks.extend(splitter.split_text(doc))
+
+    return chunks
+
+    
+
+qdrant_client.py
+from qdrant_client import QdrantClient
+from sentence_transformers import SentenceTransformer
+
+client = QdrantClient(":memory:")
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def store_chunks(chunks):
+
+    vectors = model.encode(chunks)
+
+    for i,vector in enumerate(vectors):
+
+        client.upsert(
+            collection_name="knowledge",
+            points=[
+                {
+                    "id": i,
+                    "vector": vector,
+                    "payload": {"text":chunks[i]}
+                }
+            ]
+        )
+
+
+rag_pipeline.py
+import requests
+import os
+
+ANTHROPIC_KEY = os.getenv("ANTHROPIC_KEY")
+
+def ask_question(context,question):
+
+    prompt = f"""
+Use the context below to answer the question.
+
+Context:
+{context}
+
+Question:
+{question}
+"""
+
+    url = "https://api.anthropic.com/v1/messages"
+
+    headers = {
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type":"application/json"
+    }
+
+    data = {
+        "model":"claude-3-sonnet-20240229",
+        "max_tokens":1000,
+        "messages":[{"role":"user","content":prompt}]
+    }
+
+    r = requests.post(url,json=data,headers=headers)
+
+    return r.json()
+
 ### IBM watsonx product(s) used
 
 
