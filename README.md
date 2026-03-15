@@ -39,6 +39,20 @@ Example queries:
 
 “What is the content publishing workflow?”
 
+Aside from IBM technologies other Tech Stack used are;
+
+Python
+
+Claude Sonnet
+
+Qdrant
+
+LangChain
+
+N8N
+
+Airtable
+
 The sectors we are targeting are health and climate while the beneficiaries of our solution are climate scientists, doctors, pharmacists and people with medical conditions such as those who are asthmatic.  
 Additionally, the project involves use of data from IBM's ESG applications such as the Environmental Intelligence Suite so as to enable doctors and pharmacists to make informed decisions about the how their medications would perform in hostile climates such as regions with high temperature. We are creating learning materials in the form of powerpoints for either doctors, pharmacists or climate scientists such as water engineers  who are not conversant to IBM technologies such as Watsonx.ai, Watsonx. Assistant and Watsonx. Orchestate. The information is derived from courses in the IBM SkillsBuild. We are using granite models such as Granite 13 billion  Model Instruct for summarization and  generation of text for the learning materials.
 
